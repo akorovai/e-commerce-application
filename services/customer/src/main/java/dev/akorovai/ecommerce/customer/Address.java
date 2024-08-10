@@ -1,0 +1,17 @@
+package dev.akorovai.ecommerce.customer;
+
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+@Setter
+@Validated
+public class Address {
+
+    private String street;
+    private String houseNumber;
+    private String zipCode;
+}

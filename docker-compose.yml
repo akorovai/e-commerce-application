@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: ms_pg_sql
-    image: postgres:latest
+    image: postgres
     environment:
       POSTGRES_USER: akorovai
       POSTGRES_PASSWORD: pass
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
   pgadmin:
     container_name: ms_pgadmin
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
@@ -30,7 +30,7 @@ services:
 
   mongodb:
     container_name: ms_mongo_db
-    image: mongo:latest
+    image: mongo
     restart: always
     ports:
       - "27017:27017"
@@ -41,7 +41,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: pass
 
   mongo-express:
-    image: mongo-express:latest 
+    image: mongo-express
     container_name: ms_mongo_express
     restart: always
     ports:
