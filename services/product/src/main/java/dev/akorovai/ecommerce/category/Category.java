@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity(name = "category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     private String name;
