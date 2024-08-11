@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class Category {
     @Id
     @GeneratedValue
-    private UUID id;
+    private Integer id;
 
     private String name;
     private String description;

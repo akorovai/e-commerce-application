@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS category
 (
-    id          uuid not null primary key,
+    id          INTEGER not null primary key,
     description varchar(255),
     name        varchar(255)
 );
@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS category
 
 CREATE TABLE IF NOT EXISTS product
 (
-    id                 uuid             not null primary key,
+    id                 INTEGER             not null primary key,
     description        varchar(255),
     name               varchar(255),
     available_quantity double precision not null,
     price              numeric(38, 2),
-    category_id        uuid
+    category_id        INTEGER
         constraint category_FK references category
 );
 
