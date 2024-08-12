@@ -2,10 +2,7 @@ package dev.akorovai.ecommerce.product;
 
 import dev.akorovai.ecommerce.category.Category;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -13,6 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity(name = "product")
 public class Product {
     @Id

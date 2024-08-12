@@ -1,3 +1,5 @@
+server:
+  port: 8222
 spring:
   cloud:
     gateway:
@@ -21,15 +23,7 @@ spring:
           uri: lb:http://PRODUCT-SERVICE
           predicates:
             - Path=/api/v1/products/**
-        - id: order-service
-          uri: lb:http://ORDER-SERVICE
-          predicates:
-            - Path=/api/v1/orders/**
         - id: payment-service
           uri: lb:http://PAYMENT-SERVICE
           predicates:
-            - Path=/api/v1/PAYMENTS/**
-
-
-server:
-  port: 8222
+            - Path=/api/v1/payments/**

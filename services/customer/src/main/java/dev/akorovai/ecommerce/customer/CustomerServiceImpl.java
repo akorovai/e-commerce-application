@@ -3,24 +3,23 @@ package dev.akorovai.ecommerce.customer;
 import dev.akorovai.ecommerce.exception.CustomerNotFoundException;
 import dev.akorovai.ecommerce.exception.CustomerNullException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
-    private final ModelMapper mapper;
-
+    private final CustomerMapper mapper;
     @Override
     public String createCustomer(CustomerRequest customerRequest) {
         validateCustomerRequest(customerRequest);
-        var customer = mapper.map(customerRequest, Customer.class);
-        return repository.save(customer).getId();
+        var customer = this.repository.save(mapper.toCustomer(customerRequest));
+        return customer.getId();
     }
 
     @Override
@@ -35,7 +34,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerResponse> findAllCustomers() {
-        return repository.findAll().stream().map(customer -> mapper.map(customer, CustomerResponse.class)).toList();
+        return  this.repository.findAll()
+                        .stream()
+                        .map(this.mapper::fromCustomer)
+                        .collect(Collectors.toList());
     }
 
     @Override
@@ -44,8 +46,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse findById(String customerId) {
-        return repository.findById(customerId).map(customer -> mapper.map(customer, CustomerResponse.class)).orElseThrow(() -> new CustomerNullException(String.format("Cannot find customer with id %s", customerId)));
+    public CustomerResponse findById(String id) {
+        return this.repository.findById(id)
+                       .map(mapper::fromCustomer)
+                       .orElseThrow(() -> new CustomerNotFoundException(String.format("No customer found with the provided ID: %s", id)));
     }
 
     @Override
