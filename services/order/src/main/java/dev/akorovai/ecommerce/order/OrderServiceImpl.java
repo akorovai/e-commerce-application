@@ -12,15 +12,16 @@ import dev.akorovai.ecommerce.product.ProductClient;
 import dev.akorovai.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
     private final CustomerClient customerClient;
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     public Integer createOrder(OrderRequest request) {
         var customer = this.customerClient.findCustomerById(request.customerId())
                                .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID"));
-
+        log.info("CUSTOMER: {}", customer);
         var purchasedProducts = productClient.purchaseProducts(request.products());
 
         var order = this.repository.save(mapper.toOrder(request));
@@ -57,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getReference(),
                 customer
         );
+
         paymentClient.requestOrderPayment(paymentRequest);
 
         orderProducer.sendOrderConfirmation(
@@ -78,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
         return this.repository.findAll()
                        .stream()
                        .map(this.mapper::fromOrder)
-                       .collect(Collectors.toList());
+                       .toList();
     }
 
 

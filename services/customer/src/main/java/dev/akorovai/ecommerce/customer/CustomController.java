@@ -41,13 +41,15 @@ public class CustomController {
     ) {
         return ResponseEntity.ok(this.service.existsById(customerId));
     }
-
     @GetMapping("/{customer-id}")
     public ResponseEntity<CustomerResponse> findById(
             @PathVariable("customer-id") String customerId
     ) {
-        return ResponseEntity.ok(this.service.findById(customerId));
+        CustomerResponse response = this.service.findById(customerId);
+        System.out.println("CustomerResponse: " + response);
+        return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping("/{customer-id}")
     public ResponseEntity<Void> delete(
