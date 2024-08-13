@@ -1,11 +1,17 @@
 eureka:
   instance:
     hostname: localhost
-  clint:
+  client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+name:
+  value: akorovai
 spring:
   cloud:
     config:
       override-system-properties: false
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

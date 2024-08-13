@@ -1,7 +1,6 @@
 package dev.akorovai.ecommerce.order;
 
 import dev.akorovai.ecommerce.customer.CustomerClient;
-import dev.akorovai.ecommerce.customer.CustomerResponse;
 import dev.akorovai.ecommerce.exception.BusinessException;
 import dev.akorovai.ecommerce.kafka.OrderConfirmation;
 import dev.akorovai.ecommerce.kafka.OrderProducer;
@@ -13,11 +12,12 @@ import dev.akorovai.ecommerce.product.ProductClient;
 import dev.akorovai.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -25,47 +25,49 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
     private final CustomerClient customerClient;
     private final ProductClient productClient;
-    private final ModelMapper mapper;
+    private final OrderMapper mapper;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
     private final PaymentClient paymentClient;
+
     @Override
-    public Integer createOrder(OrderRequest orderRequest) {
+    @Transactional
+    public Integer createOrder(OrderRequest request) {
+        var customer = this.customerClient.findCustomerById(request.customerId())
+                               .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID"));
 
-        // using FeignClient
-        CustomerResponse customer =
-		        customerClient.findCustomerById(orderRequest.customerId()).orElseThrow(() -> new BusinessException("Cannot create order:: No Customer exists with the provided ID"));
+        var purchasedProducts = productClient.purchaseProducts(request.products());
 
-        // RestTemplate
-        var purchasedProducts = productClient.purchaseProducts(orderRequest.products());
+        var order = this.repository.save(mapper.toOrder(request));
 
-
-        var order = repository.save(mapper.map(orderRequest, Order.class));
-
-        for (PurchaseRequest request : orderRequest.products()) {
+        for (PurchaseRequest purchaseRequest : request.products()) {
             orderLineService.saveOrderLine(
-                    new OrderLineRequest(null, order.getId(), request.productId(), request.quantity())
+                    new OrderLineRequest(
+                            null,
+                            order.getId(),
+                            purchaseRequest.productId(),
+                            purchaseRequest.quantity()
+                    )
             );
         }
         var paymentRequest = new PaymentRequest(
-                orderRequest.amount(),
-                orderRequest.paymentMethod(),
+                request.amount(),
+                request.paymentMethod(),
                 order.getId(),
                 order.getReference(),
                 customer
         );
         paymentClient.requestOrderPayment(paymentRequest);
 
-
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
-                        orderRequest.reference(),
-                        orderRequest.amount(),
-                        orderRequest.paymentMethod(),
+                        request.reference(),
+                        request.amount(),
+                        request.paymentMethod(),
                         customer,
-                        purchasedProducts)
+                        purchasedProducts
+                )
         );
-
 
         return order.getId();
     }
@@ -73,13 +75,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> findAll() {
-        return repository.findAll().stream().map(o -> mapper.map(o, OrderResponse.class)).toList();
+        return this.repository.findAll()
+                       .stream()
+                       .map(this.mapper::fromOrder)
+                       .collect(Collectors.toList());
     }
 
 
     @Override
     public OrderResponse findById(Integer orderId) {
-        return repository.findById(orderId).map(o -> mapper.map(o, OrderResponse.class)).orElseThrow(() -> new EntityNotFoundException(String.format("No order found with the provided ID::%d", orderId)));
+        return this.repository.findById(orderId)
+                       .map(this.mapper::fromOrder)
+                       .orElseThrow(() -> new EntityNotFoundException(String.format("No order " +
+                                                                                            "found with the provided ID: %d", orderId)));
     }
 }
 

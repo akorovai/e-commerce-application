@@ -3,7 +3,6 @@ package dev.akorovai.ecommerce.payment;
 import dev.akorovai.ecommerce.notification.NotificationProducer;
 import dev.akorovai.ecommerce.notification.PaymentNotificationRequest;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +11,24 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService {
 
 	private final PaymentRepository repository;
-	private final ModelMapper modelMapper;
+	private final PaymentMapper mapper;
 	private final NotificationProducer notificationProducer;
 
 	@Override
-	public Integer createPayment( PaymentRequest request ) {
-		var payment = repository.save(modelMapper.map(request, Payment.class));
+	public Integer createPayment(PaymentRequest request) {
+		Payment p = this.mapper.toPayment(request);
+		var payment = this.repository.save(p);
 
-		var pnr = PaymentNotificationRequest.builder().orderRef(request.orderReference()).amount(request.amount()).paymentMethod(request.paymentMethod()).customerFirstName(request.customer().firstName()).customerLastName(request.customer().lastName()).customerEmail(request.customer().email()).build();
-
-		notificationProducer.sendNotification(pnr);
-
+		this.notificationProducer.sendNotification(
+				new PaymentNotificationRequest(
+						request.orderReference(),
+						request.amount(),
+						request.paymentMethod(),
+						request.customer().firstName(),
+						request.customer().lastName(),
+						request.customer().email()
+				)
+		);
 		return payment.getId();
 	}
 }

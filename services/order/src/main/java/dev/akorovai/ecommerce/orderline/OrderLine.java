@@ -2,16 +2,14 @@ package dev.akorovai.ecommerce.orderline;
 
 import dev.akorovai.ecommerce.order.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Builder
 public class OrderLine {
     @Id
     @GeneratedValue

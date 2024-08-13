@@ -1,10 +1,10 @@
-package dev.akorovai.gateway;
+package dev.akorovai.ecommerce;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GetewayApplicationTests {
+class GatewayApplicationTests {
 
 	@Test
 	void contextLoads() {

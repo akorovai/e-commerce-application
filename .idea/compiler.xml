@@ -12,7 +12,7 @@
         <module name="product" />
         <module name="discovery" />
         <module name="payment" />
-        <module name="geteway" />
+        <module name="gateway" />
         <module name="customer" />
         <module name="order" />
       </profile>
@@ -20,6 +20,7 @@
     <bytecodeTargetLevel>
       <module name="config-server (1)" target="17" />
       <module name="config.server" target="17" />
+      <module name="geteway" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -29,6 +30,7 @@
       <module name="config.server" options="-parameters" />
       <module name="customer" options="-parameters" />
       <module name="discovery" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="geteway" options="-parameters" />
       <module name="notification" options="-parameters" />
       <module name="order" options="-parameters" />

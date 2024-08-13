@@ -1,13 +1,13 @@
-package dev.akorovai.gateway;
+package dev.akorovai.ecommerce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GetewayApplication {
+public class GatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GetewayApplication.class, args);
+		SpringApplication.run(GatewayApplication.class, args);
 	}
 
 }

@@ -10,15 +10,16 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
-@Builder
 @Document
 public class Notification {
+
 	@Id
 	private String id;
 	private NotificationType type;
-	private LocalDateTime notificationDateTime;
+	private LocalDateTime notificationDate;
 	private OrderConfirmation orderConfirmation;
 	private PaymentConfirmation paymentConfirmation;
 }
