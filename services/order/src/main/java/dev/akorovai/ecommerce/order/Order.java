@@ -18,30 +18,31 @@ import java.util.List;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@ToString
 @Table(name = "customer_order")
 public class Order {
-    @Id
-    @GeneratedValue
-    private Integer id;
+	@Id
+	@GeneratedValue
+	private Integer id;
 
-    @Column(unique = true,  nullable = false)
-    private String reference;
+	@Column(unique = true, nullable = false)
+	private String reference;
 
-    private BigDecimal totalAmount;
+	private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+	@Enumerated(EnumType.STRING)
+	private PaymentMethod paymentMethod;
 
-    private String customerId;
+	private String customerId;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLine> orderLines;
+	@OneToMany(mappedBy = "order")
+	private List<OrderLine> orderLines;
 
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdDate;
+	@CreatedDate
+	@Column(updatable = false, nullable = false)
+	private LocalDateTime createdDate;
 
-    @LastModifiedDate
-    @Column(insertable = false)
-    private LocalDateTime lastModifiedDate;
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
 }
