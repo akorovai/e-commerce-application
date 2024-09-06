@@ -1,7 +1,3 @@
-Here's the updated documentation with the combined installation and startup steps:
-
----
-
 # e-commerce-application
 
 A microservices-based e-commerce platform designed for scalability and flexibility. This application leverages modern Java technologies to handle various aspects of e-commerce, including product management, customer interactions, orders, payments, and notifications.
